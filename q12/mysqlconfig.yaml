@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysqlconfig
+  namespace: datastorage
+data:
+  MYSQL_DATABASE: mydatabase
+  MYSQL_USER: myusername
