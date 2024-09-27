@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pgadmin-deploy-ass3
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pgadmin-ass3
+  template:
+    metadata:
+      labels:
+        app: pgadmin-ass3
+    spec:
+      initContainers:
+        - name: init-permissions
+          image: busybox
+          command: ["sh", "-c", "mkdir -p /var/lib/pgadmin/sessions && chown -R 5050:5050 /var/lib/pgadmin"]
+          volumeMounts:
+            - mountPath: /var/lib/pgadmin
+              name: local-storage-ass3
+      containers:
+        - name: pgadmin-ass3
+          image: elestio/pgadmin:latest
+          ports:
+            - containerPort: 80
+          env:
+            - name: PGADMIN_DEFAULT_EMAIL
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap
+                  key: pgadminemail
+            - name: PGADMIN_DEFAULT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secret
+                  key: pgadminpass
+          volumeMounts:
+            - mountPath: /var/lib/pgadmin
+              name: local-storage-ass3
+      volumes:
+        - name: local-storage-ass3
+          persistentVolumeClaim:
+              claimName: pvc-ass3
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: pgadmin-service-ass3
+spec:
+  type: NodePort
+  selector:
+    app: pgadmin-ass3
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30069
