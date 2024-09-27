@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: q5
+  namespace: qq3
+data:
+  content: "This is some content for the ConfigMap"
+
