@@ -1,4 +1,4 @@
-Name:
+Name: MUHAMAD AIZAD AMER BIN AHMAD TAUFIK
 
 Q1:
 Create a deployment named nginx in the qq2 namespace using the nginx image with 3 replicas.
@@ -30,7 +30,7 @@ RequestsCPU: 0.5Memory: 500MiLimitsCPU: 1Memory: 1Gi
 
 
 Q6:
-Create a Deployment named web in the ca1 namespace with an image of nginx:latest. Create a new Service named web-svc that sits in front of this deployment. Expose the new service publicly by using the exact port of 8080. The Ingress's host field must be set to the host key value stored in an existing ConfigMap named webapp-host-fqdn, also located in the ca1 namespace. All changes should be performed in the ca1 namespace. 
+Create a Deployment named web in the ca1 namespace with an image of nginx:latest. Create a new Service named web-svc that sits in front of this deployment. Expose the new service publicly by using the exact port of 8080. 
 
 
 Q7:
