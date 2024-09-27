@@ -1,0 +1,18 @@
+controlplane $ kubectl get deployment -n ca2
+NAME          READY   UP-TO-DATE   AVAILABLE   AGE
+cloud-app01   2/2     2            2           59s
+controlplane $ kubectl get svc -n ca2
+NAME            TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE
+cloud-app-svc   ClusterIP   10.100.72.119   <none>        80/TCP    26s
+controlplane $ kubectl run -n ca2 -i --tty --restart=Never --rm netutil --image cloudacademydevops/networkutils:v2 -- curl -I cloud-app-svc
+HTTP/1.1 200 OK
+Server: nginx/1.23.3
+Date: Fri, 27 Sep 2024 13:57:20 GMT
+Content-Type: text/html
+Content-Length: 615
+Last-Modified: Tue, 13 Dec 2022 18:23:05 GMT
+Connection: keep-alive
+ETag: "6398c309-267"
+Accept-Ranges: bytes
+
+pod "netutil" deleted

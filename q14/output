@@ -1,0 +1,71 @@
+controlplane $ kubectl describe deployment -n qq3
+Name:                   nginx-deployment
+Namespace:              qq3
+CreationTimestamp:      Fri, 27 Sep 2024 14:37:06 +0000
+Labels:                 <none>
+Annotations:            deployment.kubernetes.io/revision: 1
+Selector:               app=nginx
+Replicas:               2 desired | 2 updated | 2 total | 2 available | 0 unavailable
+StrategyType:           RollingUpdate
+MinReadySeconds:        0
+RollingUpdateStrategy:  25% max unavailable, 25% max surge
+Pod Template:
+  Labels:  app=nginx
+  Containers:
+   nginx:
+    Image:         nginx:latest
+    Port:          80/TCP
+    Host Port:     0/TCP
+    Environment:   <none>
+    Mounts:        <none>
+  Volumes:         <none>
+  Node-Selectors:  <none>
+  Tolerations:     <none>
+Conditions:
+  Type           Status  Reason
+  ----           ------  ------
+  Available      True    MinimumReplicasAvailable
+  Progressing    True    NewReplicaSetAvailable
+OldReplicaSets:  <none>
+NewReplicaSet:   nginx-deployment-576c6b7b6 (2/2 replicas created)
+Events:
+  Type    Reason             Age   From                   Message
+  ----    ------             ----  ----                   -------
+  Normal  ScalingReplicaSet  24s   deployment-controller  Scaled up replica set nginx-deployment-576c6b7b6 to 2
+controlplane $ kubectl set image deployment/nginx-deployment nginx=nginx:alpine -n qq3
+deployment.apps/nginx-deployment image updated
+controlplane $ kubectl describe deployment -n qq3
+Name:                   nginx-deployment
+Namespace:              qq3
+CreationTimestamp:      Fri, 27 Sep 2024 14:37:06 +0000
+Labels:                 <none>
+Annotations:            deployment.kubernetes.io/revision: 2
+Selector:               app=nginx
+Replicas:               2 desired | 1 updated | 3 total | 2 available | 1 unavailable
+StrategyType:           RollingUpdate
+MinReadySeconds:        0
+RollingUpdateStrategy:  25% max unavailable, 25% max surge
+Pod Template:
+  Labels:  app=nginx
+  Containers:
+   nginx:
+    Image:         nginx:alpine
+    Port:          80/TCP
+    Host Port:     0/TCP
+    Environment:   <none>
+    Mounts:        <none>
+  Volumes:         <none>
+  Node-Selectors:  <none>
+  Tolerations:     <none>
+Conditions:
+  Type           Status  Reason
+  ----           ------  ------
+  Available      True    MinimumReplicasAvailable
+  Progressing    True    ReplicaSetUpdated
+OldReplicaSets:  nginx-deployment-576c6b7b6 (2/2 replicas created)
+NewReplicaSet:   nginx-deployment-bd67d5478 (1/1 replicas created)
+Events:
+  Type    Reason             Age   From                   Message
+  ----    ------             ----  ----                   -------
+  Normal  ScalingReplicaSet  37s   deployment-controller  Scaled up replica set nginx-deployment-576c6b7b6 to 2
+  Normal  ScalingReplicaSet  3s    deployment-controller  Scaled up replica set nginx-deployment-bd67d5478 to 1

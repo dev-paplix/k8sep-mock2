@@ -1,0 +1,58 @@
+controlplane $ kubectl describe pod apache
+Name:             apache
+Namespace:        default
+Priority:         0
+Service Account:  default
+Node:             node01/172.30.2.2
+Start Time:       Fri, 27 Sep 2024 13:01:46 +0000
+Labels:           <none>
+Annotations:      cni.projectcalico.org/containerID: 33f241c8fefad1ae9481fef2363921d0a1f598d5f556c3abfc3ac887895be43d
+                  cni.projectcalico.org/podIP: 192.168.1.13/32
+                  cni.projectcalico.org/podIPs: 192.168.1.13/32
+Status:           Running
+IP:               192.168.1.13
+IPs:
+  IP:  192.168.1.13
+Containers:
+  apache:
+    Container ID:   containerd://b7b44445bdd719b373db79952c09f381ac98bd23ca488d06cb5adc8848157690
+    Image:          httpd
+    Image ID:       docker.io/library/httpd@sha256:fb622cb8ed460e43311b7e2043c865695887a524b853be07a6aac4fc89fcd74f
+    Port:           <none>
+    Host Port:      <none>
+    State:          Running
+      Started:      Fri, 27 Sep 2024 13:01:49 +0000
+    Ready:          True
+    Restart Count:  0
+    Environment:
+      CONTENT:   <set to the key 'content' of config map 'q5'>        Optional: false
+      USERNAME:  <set to the key 'username' in secret 'credentials'>  Optional: false
+      PASSWORD:  <set to the key 'password' in secret 'credentials'>  Optional: false
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-wd929 (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  kube-api-access-wd929:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    ConfigMapOptional:       <nil>
+    DownwardAPI:             true
+QoS Class:                   BestEffort
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  79s   default-scheduler  Successfully assigned default/apache to node01
+  Normal  Pulling    78s   kubelet            Pulling image "httpd"
+  Normal  Pulled     76s   kubelet            Successfully pulled image "httpd" in 2.135s (2.135s including waiting). Image size: 59389601 bytes.
+  Normal  Created    76s   kubelet            Created container apache
+  Normal  Started    76s   kubelet            Started container apache

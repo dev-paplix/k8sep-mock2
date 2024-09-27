@@ -1,0 +1,17 @@
+controlplane $ cat pod.yaml 
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod
+spec:
+  containers:
+  - name: nginx
+    image: nginx:latest
+    volumeMounts:
+    - mountPath: /data
+      name: data-volume
+      readOnly: true
+  volumes:
+  - name: data-volume
+    persistentVolumeClaim:
+      claimName: podpvc

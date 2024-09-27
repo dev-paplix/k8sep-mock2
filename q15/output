@@ -1,0 +1,11 @@
+controlplane $ kubectl apply -f apache-deployment.yaml -n qq3
+deployment.apps/apache-deployment created
+controlplane $ kubectl get deployment apache-deployment -n qq3
+NAME                READY   UP-TO-DATE   AVAILABLE   AGE
+apache-deployment   1/1     1            1           18s
+controlplane $ kubectl set image deployment/apache-deployment apache=httpd:bookworm -n qq3
+deployment.apps/apache-deployment image updated
+controlplane $ kubectl rollout status deployment/apache-deployment -n qq3
+deployment "apache-deployment" successfully rolled out
+controlplane $ kubectl rollout undo deployment/apache-deployment -n qq3
+deployment.apps/apache-deployment rolled back
