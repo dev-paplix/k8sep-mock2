@@ -1,10 +1,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx
-  namespace: qq2
+  name: nginx-deployment
+  namespace: qq3
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: nginx
@@ -15,4 +15,6 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80

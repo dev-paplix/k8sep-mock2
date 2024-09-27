@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: lab-deployment
-  namespace: qq2
+  name: web
+  namespace: ca1
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: lab
+      app: nginx
   template:
     metadata:
       labels:
-        app: lab
+        app: nginx
     spec:
       containers:
-      - name: lab-container
-        image: nginx
+      - name: nginx
+        image: nginx:latest
