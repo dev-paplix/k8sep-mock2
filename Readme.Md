@@ -1,4 +1,4 @@
-Name:
+Name: Mirza Aqil Bin Mohd Azam
 
 Q1:
 Create a deployment named nginx in the qq2 namespace using the nginx image with 3 replicas.
