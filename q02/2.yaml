@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lab-deployment
+  namespace: qq2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lab-app
+  template:
+    metadata:
+      labels:
+        app: lab-app
+    spec:
+      containers:
+      - name: lab-container
+        image: nginx  # Use nginx or any other image

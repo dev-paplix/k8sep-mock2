@@ -1,0 +1,50 @@
+configmap->
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: q5
+  namespace: default
+data:
+  content: "Mock Test"
+
+
+
+  Secrets->
+  apiVersion: v1
+kind: Secret
+metadata:
+  name: credentials
+  namespace: default
+type: Opaque
+data:
+  username: YWRtaW4=  # admin
+  password: bXlwYXNzd29yZA==  # mypassword
+
+
+
+pod->
+apiVersion: v1
+kind: Pod
+metadata:
+  name: apache
+  namespace: default
+spec:
+  containers:
+  - name: apache-container
+    image: httpd
+    env:
+    - name: CONTENT
+      valueFrom:
+        configMapKeyRef:
+          name: q5
+          key: content
+    - name: USERNAME
+      valueFrom:
+        secretKeyRef:
+          name: credentials
+          key: username
+    - name: PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: credentials
+          key: password

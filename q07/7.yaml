@@ -1,0 +1,39 @@
+deployment->
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app01           
+  labels:
+    app: app01
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: app01
+  template:
+    metadata:
+      labels:
+        app: app01
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+
+
+
+service->                                 
+apiVersion: v1
+kind: Service
+metadata:
+  name: app01-svc
+spec:
+  selector:
+    app.kubernetes.io/name: MyApp
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 30001
+  type: NodePort
