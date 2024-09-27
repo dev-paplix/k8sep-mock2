@@ -1,0 +1,103 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pgadminconfig
+data:
+  PGADMIN_DEFAULT_EMAIL: "admin@admin.com"
+  PGADMIN_LISTEN_PORT: "8080"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pgadminsecret
+type: Opaque
+data:
+  PGADMIN_DEFAULT_PASSWORD: YWRtaW4=
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: question17
+provisioner: kubernetes.io/no-provisioner
+volumeBindingMode: WaitForFirstConsumer
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pgadmin-pv
+spec:
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: 1Gi
+  storageClassName: question17
+  hostPath:
+    path: /mnt/data/pgadmin
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pgadmin-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: question17
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pgadmin-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pgadmin-deployment
+  template:
+    metadata:
+      labels:
+        app: pgadmin-deployment
+    spec:
+      containers:
+        - name: pgadmin-deployment
+          image: elestio/pgadmin
+          env:
+            - name: PGADMIN_DEFAULT_EMAIL
+              valueFrom:
+                configMapKeyRef:
+                  name: pgadminconfig
+                  key: PGADMIN_DEFAULT_EMAIL
+            - name: PGADMIN_DEFAULT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pgadminsecret
+                  key: PGADMIN_DEFAULT_PASSWORD
+            - name: PGADMIN_LISTEN_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: pgadminconfig
+                  key: PGADMIN_LISTEN_PORT
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: pgadmin-vol
+              mountPath: /data/pgadmin
+      volumes:
+        - name: pgadmin-vol
+          persistentVolumeClaim:
+            claimName: pgadmin-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pgadmin-svc
+spec:
+  selector:
+    app: pgadmin-deployment
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: LoadBalancer
