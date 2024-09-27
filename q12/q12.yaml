@@ -1,0 +1,34 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: state
+provisioner: rancher.io/local-path
+parameters:
+  type: gp2
+
+
+//pv
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv
+spec:
+  capacity:
+    storage: 3Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: state
+  hostPath:
+    path: /mnt/data
+
+//configmap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysqlconfig
+  namespace: datastorage
+data:
+  MYSQL_DATABASE: your_database_name
+  MYSQL_USER: your_username
+
