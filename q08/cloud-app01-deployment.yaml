@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloud-app01
+  namespace: ca2
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cloud-app
+  template:
+    metadata:
+      labels:
+        app: cloud-app
+    spec:
+      containers:
+      - name: cloud-app
+        image: nginx:1.23.3-alpine
+        ports:
+        - containerPort: 80

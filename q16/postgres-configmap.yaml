@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+  namespace: qq3
+data:
+  POSTGRES_DB: your_database_name
