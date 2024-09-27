@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: httpd
+spec:
+  containers:
+  - name: httpd
+    image: httpd:latest
+    ports:
+    - containerPort: 80
+    env:
+    - name: USERNAME
+      valueFrom:
+        secretKeyRef:
+          name: credentials
+          key: USERNAME
+    - name: PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: credentials
+          key: PASSWORD
+    - name: CONTENT
+      valueFrom:
+        configMapKeyRef:
+          name: q5
+          key: CONTENT
