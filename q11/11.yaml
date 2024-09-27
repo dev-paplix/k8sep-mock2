@@ -1,0 +1,56 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: gp2
+provisioner: rancher.io/local-path
+reclaimPolicy: Retain
+allowVolumeExpansion: false
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: podpv
+  namespace: qq2
+  labels:
+    type: local
+spec:
+  storageClassName: gp2
+  capacity:
+    storage: 1Gi
+  volumeMode: Filesystem
+  persistentVolumeReclaimPolicy: Retain
+  accessModes:
+    - ReadOnlyMany
+  hostPath:
+    path: "/data"
+---
+# PersistentVolumeClaim
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: podpvc
+  namespace: qq2
+spec:
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: gp2
+  accessModes:
+    - ReadOnlyMany
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod
+  namespace: qq2
+spec:
+  containers:
+    - name: nginx
+      image: nginx:latest
+      volumeMounts:
+        - mountPath: "/data"
+          name: nginx
+  volumes:
+    - name: nginx
+      persistentVolumeClaim:
+        claimName: podpvc

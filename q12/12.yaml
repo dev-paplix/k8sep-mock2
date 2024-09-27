@@ -1,0 +1,100 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: state
+provisioner: rancher.io/local-path
+reclaimPolicy: Retain
+allowVolumeExpansion: false
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: statepv
+  namespace: datastorage
+  labels:
+    type: local
+spec:
+  storageClassName: state
+  capacity:
+    storage: 3Gi
+  volumeMode: Filesystem
+  persistentVolumeReclaimPolicy: Retain
+  accessModes:
+    - ReadOnlyMany
+  hostPath:
+    path: "/data"
+---
+# PersistentVolumeClaim
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: statepvc
+  namespace: datastorage
+spec:
+  resources:
+    requests:
+      storage: 3Gi
+  storageClassName: state
+  accessModes:
+    - ReadOnlyMany
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-config
+data:
+  MYSQL_DATABASE: myapp_database
+  MYSQL_USER: admin
+---
+# Secret for PostgreSQL credentials
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysql-secret
+type: Opaque
+data:
+  MYSQL_ROOT_PASSWORD: YWRtaW4K # base64 encoded 'admin'
+  MYSQL_PASSWORD: YWRtaW4K # base64 encoded 'admin'
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+  namespace: datastorage
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  serviceName: "mysql"
+  replicas: 3
+  minReadySeconds: 10
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: nginx
+          image: mysql:oraclelinux9
+          ports:
+            - containerPort: 3306
+              name: mysql
+          volumeMounts:
+            - name: data
+              mountPath: /usr/share/
+          envFrom:
+            - configMapRef:
+                name: mysql-config
+            - secretRef:
+                name: mysql-secret
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: state
+        resources:
+          requests:
+            storage: 2Gi

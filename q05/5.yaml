@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: limit
+  namespace: qq3
+spec:
+  selector:
+    matchLabels:
+      app: limit
+  serviceName: limit
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: limit
+    spec:
+      containers:
+        - name: limit
+          image: redis:latest
+          resources:
+            requests:
+              cpu: "0.5"
+              memory: 500Mi
+            limits:
+              cpu: 1
+              memory: 1Gi
