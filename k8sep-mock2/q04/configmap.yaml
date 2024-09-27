@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: q5
+  namespace: default
+data:
+  username: user
+  password: user
