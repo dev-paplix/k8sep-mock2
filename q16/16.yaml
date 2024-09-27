@@ -1,0 +1,108 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: pg-storage
+provisioner: rancher.io/local-path
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pg-pv
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: pg-storage
+  hostPath:
+    path: /mnt/data/postgres
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pg-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: pg-storage
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pg-config
+data:
+  POSTGRES_DB: mydatabase
+  POSTGRES_USER: myuser
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pg-secret
+type: Opaque
+data:
+  POSTGRES_PASSWORD: cGFzc3dvcmQ=
+
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:latest
+        env:
+        - name: POSTGRES_DB
+          valueFrom:
+            configMapKeyRef:
+              name: pg-config
+              key: POSTGRES_DB
+        - name: POSTGRES_USER
+          valueFrom:
+            configMapKeyRef:
+              name: pg-config
+              key: POSTGRES_USER
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: pg-secret
+              key: POSTGRES_PASSWORD
+        volumeMounts:
+        - name: pg-storage
+          mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: pg-storage
+        persistentVolumeClaim:
+          claimName: pg-pvc
+
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-service
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5432
+    targetPort: 5432
+  selector:
+    app: postgres

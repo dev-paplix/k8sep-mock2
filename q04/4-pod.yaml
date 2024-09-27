@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: apache
+  namespace: default
+spec:
+  containers:
+  - name: apache-container
+    image: httpd:latest
+    env:
+    - name: CONTENT
+      valueFrom:
+        configMapKeyRef:
+          name: q5
+          key: content
+    - name: USERNAME
+      valueFrom:
+        secretKeyRef:
+          name: credentials
+          key: username
+    - name: PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: credentials
+          key: password
+    ports:
+    - containerPort: 80

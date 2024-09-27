@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lab-deployment
+  namespace: qq2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lab
+  template:
+    metadata:
+      labels:
+        app: lab
+    spec:
+      containers:
+      - name: lab-container
+        image: nginx:latest
+        ports:
+        - containerPort: 80

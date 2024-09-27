@@ -1,0 +1,96 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: state
+provisioner: rancher.io/local-path
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: state-pv
+spec:
+  capacity:
+    storage: 3Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: state
+  hostPath:
+    path: /mnt/data
+
+--- 
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysqlconfig
+  namespace: datastorage
+data:
+  MYSQL_DATABASE: mydatabase
+  MYSQL_USER: myuser
+
+--- 
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysqlsecret
+  namespace: datastorage
+type: Opaque
+data:
+  MYSQL_ROOT_PASSWORD: YWRtaW4=
+  MYSQL_PASSWORD: YWRtaW4=
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+  namespace: datastorage
+spec:
+  serviceName: "mysql"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:oraclelinux9
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysqlsecret
+              key: MYSQL_ROOT_PASSWORD
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysqlsecret
+              key: MYSQL_PASSWORD
+        - name: MYSQL_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: mysqlconfig
+              key: MYSQL_DATABASE
+        - name: MYSQL_USER
+          valueFrom:
+            configMapKeyRef:
+              name: mysqlconfig
+              key: MYSQL_USER
+        volumeMounts:
+        - name: mysql-storage
+          mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+  - metadata:
+      name: mysql-storage
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 2Gi
+      storageClassName: state
