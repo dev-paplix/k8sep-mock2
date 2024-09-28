@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: limit-svc
+  labels:
+    app: limit
+spec:
+  ports:
+    - port: 80
+      name: limit-ss
+  clusterIP: None
+  selector:
+    app: limit-ss
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: limit-ss
+spec:
+  serviceName: "limit-svc" 
+  replicas: 3
+  selector:
+    matchLabels:
+      app: limit-ss
+  template:
+    metadata:
+      labels:
+        app: limit-ss
+    spec: 
+      containers: 
+        - name: limit-ss
+          image: redis:latest
+          resources:
+            requests:
+              memory: "500Mi"
+              cpu: "0.5"
+            limits:
+              memory: "1Gi"
+              cpu: "1"
+          ports:
+            - containerPort: 80
+              name: redis

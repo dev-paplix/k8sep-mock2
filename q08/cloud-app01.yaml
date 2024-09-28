@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloudapp01-deployment
+  labels:
+    app: cloudapp
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cloudapp
+  template:
+    metadata:
+      labels:
+        app: cloudapp
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.23.3-alpine
+        ports:
+        - containerPort: 80
