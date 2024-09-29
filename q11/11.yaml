@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod
+  namespace: qq2
+spec:
+  containers:
+    - name: nginx
+      image: nginx
+      volumeMounts:
+        - name: data
+          mountPath: /data
+          readOnly: true
+      ports:
+        - containerPort: 80
+  volumes:
+    - name: data
+      persistentVolumeClaim:
+        claimName: podpvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: podpvc
+  namespace: qq2
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: gp2
