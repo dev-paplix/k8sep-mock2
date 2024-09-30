@@ -1,4 +1,4 @@
-Name: ANIS ADLEENA BT KAMARULZAMAN
+Name: J.J. JOSHUA JEPLI
 
 Q1:
 Create a deployment named nginx in the qq2 namespace using the nginx image with 3 replicas. <<--done-->>
