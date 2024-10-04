@@ -54,7 +54,7 @@ Create a StorageClass named class configured with the following settings:
 Q10:
 Create a PersistentVolume named pv. The PersistentVolume must be configured with the following settings:
 
-storageClassName: gp21Gi of storage capacityallow a single Node read-write accessuse a hostPath of /mnt/data
+storageClassName: gp2 1Gi of storage capacityallow a single Node read-write accessuse a hostPath of /mnt/data
 The PersistentVolume must be claimed by a PersistentVolumeClaim named pvc. The PersistentVolume must request 1Gi of storage capacity.
 
 
